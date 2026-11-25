@@ -30,7 +30,8 @@ def check_png(data):
     width, height = struct.unpack(">II", data[16:24])
     if (width, height) != (1024, 1024):
         raise SystemExit(f"unexpected dimensions: {width}x{height}")
-    if not data.endswith(b"IEND" + struct.pack(">I", 0)):
+    if not (len(data) >= 12 and data[-12:-8] == b"\x00\x00\x00\x00"
+            and data[-8:-4] == b"IEND"):
         raise SystemExit("entry.png is truncated: missing IEND chunk")
     return width, height
 
